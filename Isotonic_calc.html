@@ -1,0 +1,75 @@
+<html>
+<head>
+    <style>
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label for="sucrose">Sucrose (g):</label><br>
+        <input type="range" id="sucrose" name="sucrose" min="0" max="100" value="0" oninput="calculate()">
+        <output id="sucrose_output" for="sucrose"></output><br>
+
+        <label for="maltodextrin">Maltodextrin (g):</label><br>
+        <input type="range" id="maltodextrin" name="maltodextrin" min="0" max="100" value="0" oninput="calculate()">
+        <output id="maltodextrin_output" for="maltodextrin"></output><br>
+
+        <label for="sodium">Sodium Chloride (g):</label><br>
+        <input type="range" id="sodium" name="sodium" min="0" max="5" step="0.1" value="0" oninput="calculate()">
+        <output id="sodium_output" for="sodium"></output><br>
+
+        <label for="potassium">Potassium Chloride (mg):</label><br>
+        <input type="range" id="potassium" name="potassium" min="0" max="500" value="0" oninput="calculate()">
+        <output id="potassium_output" for="potassium"></output><br>
+
+        <label for="magnesium">Magnesium Chloride (mg):</label><br>
+        <input type="range" id="magnesium" name="magnesium" min="0" max="100" value="0" oninput="calculate()">
+        <output id="magnesium_output" for="magnesium"></output><br>
+        
+        <label for="calcium">Calcium Carbonate (mg):</label><br>
+        <input type="range" id="calcium" name="calcium" min="0" max="100" value="0" oninput="calculate()">
+        <output id="calcium_output" for="calcium"></output><br>
+
+        <p id="output"></p>
+    </div>
+
+    <script>
+        function calculate() {
+            // get values from sliders
+            var sucrose = document.getElementById('sucrose').value;
+            var maltodextrin = document.getElementById('maltodextrin').value;
+            var sodium = document.getElementById('sodium').value;
+            var potassium = document.getElementById('potassium').value / 1000; // convert from mg to g
+            var magnesium = document.getElementById('magnesium').value / 1000; // convert from mg to g
+            var calcium = document.getElementById('calcium').value / 1000; // convert from mg to g
+
+            // display the current values
+            document.getElementById('sucrose_output').value = sucrose + ' g';
+            document.getElementById('maltodextrin_output').value = maltodextrin + ' g';
+            document.getElementById('sodium_output').value = sodium + ' g';
+            document.getElementById('potassium_output').value = potassium * 1000 + ' mg'; // convert back to mg for display
+            document.getElementById('magnesium_output').value = magnesium * 1000 + ' mg'; // convert back to mg for display
+            document.getElementById('calcium_output').value = calcium * 1000 + ' mg'; // convert back to mg for display
+
+            // calculate osmolarity for each component
+            var osmolarity_sucrose = sucrose / 342.3; // 342.3 g/mol for sucrose
+            var osmolarity_maltodextrin = maltodextrin / 504.44; // assuming a degree of polymerization of 3.3 for maltodextrin, its molecular weight is about 504.44 g/mol
+            var osmolarity_sodium = 2 * (sodium / 58.44); // 58.44 g/mol for sodium chloride, it dissociates into 2 ions in solution
+            var osmolarity_potassium = 2 * (potassium / 74.55); // 74.55 g/mol for potassium chloride, it dissociates into 2 ions in solution
+            var osmolarity_magnesium = 2 * (magnesium / 95.211); // 95.211 g/mol for magnesium chloride, it dissociates into 2 ions in solution
+            var osmolarity_calcium = calcium / 100.0869; // 100.0869 g/mol for calcium carbonate
+
+            // sum up the osmolarities
+            var total_osmolarity = 1000 * (osmolarity_sucrose + osmolarity_maltodextrin + osmolarity_sodium + osmolarity_potassium + osmolarity_magnesium + osmolarity_calcium); // multiply by 1000 to get mOsm/L
+
+            // calculate the volume of water needed to make the solution isotonic (300 mOsm/L)
+            var volume = total_osmolarity / 300;
+
+            // display the result
+            document.getElementById('output').innerHTML = "Volume of water needed: " + volume.toFixed(2) + " L";
+        }
+    </script>
+</body>
+</html>
